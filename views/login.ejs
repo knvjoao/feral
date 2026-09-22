@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<div class="auth-wrapper">
+  <div class="auth-header">
+    <h1>Acesse sua Conta</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+      Entre para gerenciar suas notificações de feiras ou administrar eventos.
+    </p>
+  </div>
+
+  <div class="auth-tabs">
+    <a href="/login" class="auth-tab-link active">Entrar</a>
+    <a href="/cadastro" class="auth-tab-link">Criar Conta</a>
+  </div>
+
+  <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div class="form-group">
+      <label for="email" class="form-label">E-mail Cadastrado *</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        class="form-control" 
+        placeholder="seu.email@exemplo.com" 
+        required 
+        autofocus
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="senha" class="form-label">Senha *</label>
+      <input 
+        type="password" 
+        id="senha" 
+        name="senha" 
+        class="form-control" 
+        placeholder="Digite sua senha" 
+        required
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+      Entrar na Plataforma
+    </button>
+  </form>
+
+  <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+    Ainda não tem cadastro? <a href="/cadastro" style="font-weight: 600;">Cadastre-se grátis</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

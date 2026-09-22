@@ -1,0 +1,123 @@
+<%- include('partials/header') %>
+
+<div style="max-width: 760px; margin: 2rem auto;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/agenda" style="color: var(--text-secondary); font-size: 0.95rem;">&larr; Voltar para a Agenda</a>
+  </div>
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md);">
+    <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+      <h1 style="font-size: 1.85rem; color: var(--text-primary); font-weight: 800;">
+        <%= isEdit ? 'Editar Feira: ' + feira.nome : 'Cadastrar Nova Feira' %>
+      </h1>
+      <p style="color: var(--text-secondary); margin-top: 0.25rem;">
+        <%= isEdit ? 'Altere as informações da feira. Inscritos serão notificados automaticamente.' : 'Preencha os dados abaixo para divulgar um novo evento na plataforma.' %>
+      </p>
+    </div>
+
+    <form action="<%= action %>" method="POST" style="display: flex; flex-direction: column; gap: 1.25rem;">
+      
+      <div class="form-group">
+        <label for="nome" class="form-label">Nome da Feira *</label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome" 
+          class="form-control" 
+          placeholder="Ex: Feira de Artesanato da Pajuçara" 
+          value="<%= feira.nome || '' %>" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="categoria_id" class="form-label">Categoria Principal *</label>
+        <select id="categoria_id" name="categoria_id" class="form-select" required>
+          <option value="">Selecione uma Categoria...</option>
+          <% categorias.forEach(cat => { %>
+            <option value="<%= cat.id %>" <%= (feira.categoria_id == cat.id) ? 'selected' : '' %>>
+              <%= cat.nome %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="data_evento" class="form-label">Data do Evento *</label>
+          <input 
+            type="date" 
+            id="data_evento" 
+            name="data_evento" 
+            class="form-control" 
+            value="<%= formatInputDate(feira.data_evento) %>" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="horario" class="form-label">Horário de Funcionamento *</label>
+          <input 
+            type="text" 
+            id="horario" 
+            name="horario" 
+            class="form-control" 
+            placeholder="Ex: 16:00 às 22:00" 
+            value="<%= feira.horario || '' %>" 
+            required
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="local" class="form-label">Local e Endereço *</label>
+        <input 
+          type="text" 
+          id="local" 
+          name="local" 
+          class="form-control" 
+          placeholder="Ex: Praça Multieventos, Praia de Pajuçara, Maceió - AL" 
+          value="<%= feira.local || '' %>" 
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="tipo_produtos" class="form-label">Tipo de Produtos Expostos *</label>
+        <input 
+          type="text" 
+          id="tipo_produtos" 
+          name="tipo_produtos" 
+          class="form-control" 
+          placeholder="Ex: Filé, rendas, doces regionais, cerâmica, pinturas" 
+          value="<%= feira.tipo_produtos || '' %>" 
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="descricao" class="form-label">Descrição Completa</label>
+        <textarea 
+          id="descricao" 
+          name="descricao" 
+          class="form-control" 
+          rows="5" 
+          placeholder="Conte detalhes sobre os artesãos, atrações musicais, estacionamento, história da feira, etc."
+        ><%= feira.descricao || '' %></textarea>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.8rem;">
+          <%= isEdit ? '💾 Salvar Alterações' : '🚀 Publicar Feira' %>
+        </button>
+        <a href="<%= isEdit ? '/feiras/' + feira.id : '/agenda' %>" class="btn btn-outline" style="padding: 0.8rem 1.5rem;">
+          Cancelar
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

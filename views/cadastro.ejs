@@ -1,0 +1,76 @@
+<%- include('partials/header') %>
+
+<div class="auth-wrapper">
+  <div class="auth-header">
+    <h1>Criar Conta no Fer AL</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+      Cadastro simples e direto para se inscrever e receber novidades de feiras.
+    </p>
+  </div>
+
+  <div class="auth-tabs">
+    <a href="/login" class="auth-tab-link">Entrar</a>
+    <a href="/cadastro" class="auth-tab-link active">Criar Conta</a>
+  </div>
+
+  <form action="/cadastro" method="POST" style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div class="form-group">
+      <label for="nome" class="form-label">Nome Completo *</label>
+      <input 
+        type="text" 
+        id="nome" 
+        name="nome" 
+        class="form-control" 
+        placeholder="Ex: João da Silva" 
+        required 
+        autofocus
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="form-label">E-mail *</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        class="form-control" 
+        placeholder="seu.email@exemplo.com" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="senha" class="form-label">Senha *</label>
+      <input 
+        type="password" 
+        id="senha" 
+        name="senha" 
+        class="form-control" 
+        placeholder="Crie uma senha segura" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="confirmar_senha" class="form-label">Confirme a Senha *</label>
+      <input 
+        type="password" 
+        id="confirmar_senha" 
+        name="confirmar_senha" 
+        class="form-control" 
+        placeholder="Repita a senha criada" 
+        required
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+      Cadastrar e Entrar
+    </button>
+  </form>
+
+  <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+    Já possui uma conta? <a href="/login" style="font-weight: 600;">Faça login aqui</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

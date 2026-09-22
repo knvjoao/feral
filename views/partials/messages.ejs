@@ -1,0 +1,13 @@
+<% if (locals.flashMessage) { %>
+  <div class="alert alert-<%= flashMessage.type || 'info' %>">
+    <span><%= flashMessage.text %></span>
+    <button type="button" class="alert-close" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: inherit;">&times;</button>
+  </div>
+<% } %>
+
+<% if (locals.erro) { %>
+  <div class="alert alert-danger">
+    <span><%= erro %></span>
+    <button type="button" class="alert-close" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: inherit;">&times;</button>
+  </div>
+<% } %>

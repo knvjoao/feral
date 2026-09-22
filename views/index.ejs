@@ -1,0 +1,144 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Descubra as Feiras de Alagoas</h1>
+    <p>Conecte-se com o artesanato local, culinária típica, moda autoral e manifestações culturais vibrantes por todo o estado.</p>
+    <div class="hero-buttons">
+      <a href="/agenda" class="btn btn-secondary">Explorar Agenda Completa</a>
+      <a href="#fale-conosco" class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: #fff !important; border-color: rgba(255,255,255,0.4);">Fale Conosco</a>
+    </div>
+  </div>
+</section>
+
+<section style="margin-bottom: 3rem;">
+  <div class="section-title">
+    <div>
+      <h2>Feiras em Destaque</h2>
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Clique no nome da feira para conferir detalhes e programações completas.</p>
+    </div>
+    <a href="/agenda" class="btn btn-outline btn-sm">Ver Todas na Agenda &rarr;</a>
+  </div>
+
+  <% if (!feiras || feiras.length === 0) { %>
+    <div style="background: var(--surface); padding: 3rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+      <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1rem;">Nenhuma feira cadastrada no momento.</p>
+      <% if (locals.user && locals.user.isAdmin) { %>
+        <a href="/feiras/criar" class="btn btn-primary">+ Cadastrar Primeira Feira</a>
+      <% } else { %>
+        <a href="/agenda" class="btn btn-outline">Consultar Agenda</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="feiras-grid">
+      <% feiras.forEach(feira => { %>
+        <% 
+          let badgeClass = 'badge-default';
+          const cat = (feira.categoria_nome || '').toLowerCase();
+          if (cat.includes('artesanato')) badgeClass = 'badge-artesanato';
+          else if (cat.includes('alimento')) badgeClass = 'badge-alimentos';
+          else if (cat.includes('moda')) badgeClass = 'badge-moda';
+          else if (cat.includes('cultural') || cat.includes('evento')) badgeClass = 'badge-eventos-culturais';
+        %>
+        <div class="feira-card">
+          <div class="feira-header">
+            <h3 class="feira-nome">
+              <a href="/feiras/<%= feira.id %>"><%= feira.nome %></a>
+            </h3>
+            <span class="badge-categoria <%= badgeClass %>"><%= feira.categoria_nome %></span>
+          </div>
+
+          <p class="feira-desc"><%= feira.descricao || 'Sem descrição informada.' %></p>
+
+          <div class="feira-meta">
+            <div class="meta-item">
+              <span>📅</span>
+              <strong>Data:</strong> <%= formatDate(feira.data_evento) %>
+            </div>
+            <div class="meta-item">
+              <span>⏰</span>
+              <strong>Horário:</strong> <%= feira.horario %>
+            </div>
+            <div class="meta-item">
+              <span>📍</span>
+              <strong>Local:</strong> <%= feira.local %>
+            </div>
+            <div class="meta-item">
+              <span>🛍️</span>
+              <strong>Produtos:</strong> <%= feira.tipo_produtos %>
+            </div>
+          </div>
+
+          <div class="feira-actions">
+            <a href="/feiras/<%= feira.id %>" class="btn btn-primary btn-sm" style="flex: 1;">Ver Detalhes</a>
+            <% if (locals.user && locals.user.isAdmin) { %>
+              <a href="/feiras/editar/<%= feira.id %>" class="btn btn-outline btn-sm">Editar</a>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<section id="fale-conosco" class="fale-conosco-section">
+  <div class="fale-conosco-header">
+    <h2>Fale Conosco</h2>
+    <p>Dúvidas, sugestões ou suporte para expositores e visitantes? Envie sua mensagem e receba um número de protocolo (ticket).</p>
+  </div>
+
+  <% if (ticketGerado) { %>
+    <div class="ticket-banner">
+      <h3 style="color: #065f46; margin-bottom: 0.5rem;">🎉 Mensagem Registrada com Sucesso!</h3>
+      <p style="color: #047857;">Olá, <strong><%= ticketGerado.nome %></strong>. Seu ticket de atendimento foi gerado:</p>
+      <div class="ticket-code"><%= ticketGerado.codigo %></div>
+      <p style="font-size: 0.88rem; color: #065f46;">Guarde esse código para acompanhar sua solicitação.</p>
+    </div>
+  <% } %>
+
+  <form action="/fale-conosco" method="POST" class="form-fale-conosco">
+    <div class="form-group">
+      <label for="nome" class="form-label">Nome Completo *</label>
+      <input 
+        type="text" 
+        id="nome" 
+        name="nome" 
+        class="form-control" 
+        placeholder="Ex: Maria das Graças" 
+        value="<%= locals.user ? locals.user.nome : '' %>" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="form-label">E-mail de Contato *</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        class="form-control" 
+        placeholder="seu.email@exemplo.com" 
+        value="<%= locals.user ? locals.user.email : '' %>" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="mensagem" class="form-label">Mensagem *</label>
+      <textarea 
+        id="mensagem" 
+        name="mensagem" 
+        class="form-control" 
+        rows="4" 
+        placeholder="Descreva sua dúvida, sugestão ou informação sobre uma feira..." 
+        required
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="align-self: flex-start; padding: 0.75rem 1.75rem;">
+      ✉️ Enviar Mensagem e Gerar Ticket
+    </button>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

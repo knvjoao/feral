@@ -1,0 +1,122 @@
+<%- include('partials/header') %>
+
+<div style="margin: 2rem 0;">
+  <div class="section-title">
+    <div>
+      <h1>Agenda de Feiras em Alagoas</h1>
+      <p style="color: var(--text-secondary);">Encontre datas, horários e locais dos próximos eventos culturais e comerciais.</p>
+    </div>
+    <% if (locals.user && locals.user.isAdmin) { %>
+      <a href="/feiras/criar" class="btn btn-secondary btn-sm">+ Nova Feira</a>
+    <% } %>
+  </div>
+
+  <div class="filter-card">
+    <form action="/agenda" method="GET">
+      <div class="filter-grid">
+        <div class="form-group">
+          <label for="categoria" class="form-label">Categoria:</label>
+          <select name="categoria" id="categoria" class="form-select">
+            <option value="">Todas as Categorias</option>
+            <% categorias.forEach(cat => { %>
+              <option value="<%= cat.id %>" <%= filtros.categoria == cat.id ? 'selected' : '' %>>
+                <%= cat.nome %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data" class="form-label">Data do Evento:</label>
+          <input 
+            type="date" 
+            name="data" 
+            id="data" 
+            class="form-control" 
+            value="<%= filtros.data || '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="local" class="form-label">Local / Cidade:</label>
+          <input 
+            type="text" 
+            name="local" 
+            id="local" 
+            class="form-control" 
+            placeholder="Ex: Ponta Verde, Maceió, Penedo..." 
+            value="<%= filtros.local || '' %>"
+          >
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">🔍 Filtrar</button>
+          <a href="/agenda" class="btn btn-outline" title="Limpar Filtros">↺ Limpar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <% if (!feiras || feiras.length === 0) { %>
+    <div style="background: var(--surface); padding: 3.5rem 1.5rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+      <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Nenhuma feira encontrada com esses filtros</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Tente ajustar os critérios de data, local ou categoria para ver outros eventos.</p>
+      <a href="/agenda" class="btn btn-outline">Ver todas as feiras da agenda</a>
+    </div>
+  <% } else { %>
+    <div style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.95rem;">
+      Exibindo <strong><%= feiras.length %></strong> <%= feiras.length === 1 ? 'evento programado' : 'eventos programados' %>:
+    </div>
+
+    <div class="feiras-grid">
+      <% feiras.forEach(feira => { %>
+        <% 
+          let badgeClass = 'badge-default';
+          const cat = (feira.categoria_nome || '').toLowerCase();
+          if (cat.includes('artesanato')) badgeClass = 'badge-artesanato';
+          else if (cat.includes('alimento')) badgeClass = 'badge-alimentos';
+          else if (cat.includes('moda')) badgeClass = 'badge-moda';
+          else if (cat.includes('cultural') || cat.includes('evento')) badgeClass = 'badge-eventos-culturais';
+        %>
+        <div class="feira-card">
+          <div class="feira-header">
+            <h3 class="feira-nome">
+              <a href="/feiras/<%= feira.id %>"><%= feira.nome %></a>
+            </h3>
+            <span class="badge-categoria <%= badgeClass %>"><%= feira.categoria_nome %></span>
+          </div>
+
+          <p class="feira-desc"><%= feira.descricao || 'Sem descrição cadastrada.' %></p>
+
+          <div class="feira-meta">
+            <div class="meta-item">
+              <span>📅</span>
+              <strong>Data:</strong> <%= formatDate(feira.data_evento) %>
+            </div>
+            <div class="meta-item">
+              <span>⏰</span>
+              <strong>Horário:</strong> <%= feira.horario %>
+            </div>
+            <div class="meta-item">
+              <span>📍</span>
+              <strong>Local:</strong> <%= feira.local %>
+            </div>
+            <div class="meta-item">
+              <span>🏷️</span>
+              <strong>Tipo de Produtos:</strong> <%= feira.tipo_produtos %>
+            </div>
+          </div>
+
+          <div class="feira-actions">
+            <a href="/feiras/<%= feira.id %>" class="btn btn-primary btn-sm" style="flex: 1;">Ver Detalhes</a>
+            <% if (locals.user && locals.user.isAdmin) { %>
+              <a href="/feiras/editar/<%= feira.id %>" class="btn btn-outline btn-sm">Editar</a>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

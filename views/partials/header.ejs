@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Fer AL - Feiras de Alagoas' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-container">
+      
+      <a href="/" class="brand">
+        <span>Fer AL</span>
+        <span class="brand-badge">Alagoas</span>
+      </a>
+
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a href="/">Início</a>
+        </li>
+        <li class="nav-item">
+          <a href="/agenda">Agenda de Feiras</a>
+        </li>
+        <li class="nav-item">
+          <a href="/#fale-conosco">Fale Conosco</a>
+        </li>
+
+        <% if (locals.user) { %>
+          <% if (locals.user.isAdmin) { %>
+            <li class="nav-item">
+              <a href="/feiras/criar" class="btn btn-secondary btn-sm">+ Cadastrar Feira</a>
+            </li>
+          <% } %>
+          <li class="nav-item">
+            <a href="/perfil" class="btn btn-outline btn-sm">
+              👤 <%= locals.user.nome.split(' ')[0] %>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/logout" style="color: #ef4444;">Sair</a>
+          </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a href="/login" class="btn btn-primary btn-sm">Login / Cadastro</a>
+          </li>
+        <% } %>
+      </ul>
+
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="flash-container">
+      <%- include('messages') %>
+    </div>

@@ -1,0 +1,172 @@
+<%- include('partials/header') %>
+
+<div style="margin: 2rem 0;">
+  
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-primary);">
+          Olá, <%= locals.user.nome %>!
+        </h1>
+        <% if (locals.user.isAdmin) { %>
+          <span style="background: #0d9488; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase;">
+            Organizador
+          </span>
+        <% } else { %>
+          <span style="background: #e2e8f0; color: #475569; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase;">
+            Visitante
+          </span>
+        <% } %>
+      </div>
+      <p style="color: var(--text-secondary); margin-top: 0.25rem;">
+        E-mail: <strong><%= locals.user.email %></strong>
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <% if (locals.user.isAdmin) { %>
+        <a href="/feiras/criar" class="btn btn-secondary btn-sm">+ Cadastrar Nova Feira</a>
+      <% } %>
+      <a href="/agenda" class="btn btn-outline btn-sm">Explorar Agenda</a>
+      <a href="/logout" class="btn btn-outline btn-sm" style="color: #ef4444 !important; border-color: #fecaca;">Sair da Conta</a>
+    </div>
+  </div>
+
+  <div class="perfil-grid">
+    
+    <div>
+      <div class="perfil-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+          <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">
+            🔔 Minhas Inscrições em Feiras
+          </h2>
+          <span style="background: var(--primary-light); color: var(--primary); font-weight: 700; font-size: 0.85rem; padding: 2px 8px; border-radius: 9999px;">
+            <%= inscricoes.length %>
+          </span>
+        </div>
+
+        <% if (!inscricoes || inscricoes.length === 0) { %>
+          <div style="text-align: center; padding: 2rem 1rem; color: var(--text-secondary);">
+            <p style="margin-bottom: 1rem;">Você ainda não está inscrito em nenhuma feira.</p>
+            <p style="font-size: 0.9rem;">Inscreva-se nas feiras abaixo para receber novidades e lembretes!</p>
+          </div>
+        <% } else { %>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <% inscricoes.forEach(sub => { %>
+              <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; background: var(--bg-main);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                  <h4 style="font-size: 1.1rem;">
+                    <a href="/feiras/<%= sub.feira_id %>" style="color: var(--text-primary); font-weight: 700;"><%= sub.nome %></a>
+                  </h4>
+                  <span style="font-size: 0.75rem; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                    <%= sub.categoria_nome %>
+                  </span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                  <div>📅 <strong>Data:</strong> <%= formatDate(sub.data_evento) %> às <%= sub.horario %></div>
+                  <div>📍 <strong>Local:</strong> <%= sub.local %></div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                  <a href="/feiras/<%= sub.feira_id %>" class="btn btn-outline btn-sm" style="flex: 1;">Ver Detalhes</a>
+                  <form action="/feiras/<%= sub.feira_id %>/desinscrever" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-danger btn-sm" title="Cancelar recebimento de notificações">
+                      Cancelar Inscrição
+                    </button>
+                  </form>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <% if (feirasDisponiveis && feirasDisponiveis.length > 0) { %>
+          <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <h3 style="font-size: 1.05rem; margin-bottom: 0.75rem; color: var(--text-primary);">
+              ✨ Feiras Disponíveis para Inscrição
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <% feirasDisponiveis.slice(0, 4).forEach(f => { %>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                  <div>
+                    <a href="/feiras/<%= f.id %>" style="font-weight: 600; font-size: 0.95rem;"><%= f.nome %></a>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                      <%= formatDate(f.data_evento) %> - <%= f.local %>
+                    </div>
+                  </div>
+                  <form action="/feiras/<%= f.id %>/inscrever" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+                      + Inscrever-se
+                    </button>
+                  </form>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div>
+      <div id="notificacoes" class="perfil-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+          <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">
+            📬 Central de Notificações
+          </h2>
+          <% 
+            const naoLidas = notificacoes.filter(n => !n.lida).length;
+          %>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <% if (naoLidas > 0) { %>
+              <span style="background: #f97316; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 2px 8px; border-radius: 9999px;">
+                <%= naoLidas %> nova<%= naoLidas > 1 ? 's' : '' %>
+              </span>
+              <form action="/notificacoes/ler-todas" method="POST" style="margin: 0;">
+                <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                  Ler Todas
+                </button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+
+        <% if (!notificacoes || notificacoes.length === 0) { %>
+          <div style="text-align: center; padding: 3rem 1rem; color: var(--text-secondary);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📭</div>
+            <p>Nenhuma notificação registrada na sua conta.</p>
+          </div>
+        <% } else { %>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 520px; overflow-y: auto; padding-right: 0.25rem;">
+            <% notificacoes.forEach(notif => { %>
+              <div class="notificacao-item <%= notif.lida ? 'lida' : '' %>">
+                <div style="flex: 1;">
+                  <p style="color: var(--text-primary); font-size: 0.95rem; margin-bottom: 0.35rem; font-weight: <%= notif.lida ? 'normal' : '600' %>;">
+                    <%= notif.mensagem %>
+                  </p>
+                  <small style="color: var(--text-muted); font-size: 0.78rem;">
+                    <%= formatDate(notif.criado_em) %>
+                  </small>
+                </div>
+
+                <% if (!notif.lida) { %>
+                  <form action="/notificacoes/<%= notif.id %>/lida" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; white-space: nowrap;">
+                      Marcar como lida
+                    </button>
+                  </form>
+                <% } else { %>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">✓ Lida</span>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%- include('partials/footer') %>

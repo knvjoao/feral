@@ -1,0 +1,5 @@
+# Dependências instaladas localmente
+node_modules/
+
+# Credenciais e variáveis de ambiente locais
+.env
